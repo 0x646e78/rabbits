@@ -16,17 +16,27 @@ def printit():
     for k in counter:
         pos = word_dict[count]
         outword.append(pos[0][k])
+#        print "counter value is ", k
         count += 1
     print "".join([str(j) for j in outword])
 
 def iterator():
     global counter
-    for i in range(length):
-        print "i is ", i
-        print "max_values %d" % max_values[i]
-        for j in range(0, max_values[i]):
-            printit()
-            counter[i] = j
+#    for i in range(length):
+        #        print "i is ", i
+#        print "max_values %d" % max_values[i]
+#        for j in range(0, max_values[i]):
+#            counter[i] = j
+#            printit()
+    while True:
+        printit()
+        for i in range (length-1, -1, -1):
+            counter[i] += 1
+            if counter[i] < max_values[i]:
+                break
+            counter[i] = 0
+        if sum(counter) == 0:
+            break
 
 def build_word():
     global max_values
