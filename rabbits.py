@@ -1,11 +1,11 @@
 from sys import argv
+import hashlib
 from collections import defaultdict
 import chars
 
 script, word = argv
 
-characters = list(word)
-length = len(characters)
+length = len(word)
 word_dict = defaultdict(list)
 max_values = [0 for i in range(length)]
 counter = [0 for i in range(length)]
@@ -17,7 +17,10 @@ def printit():
         pos = word_dict[count]
         outword.append(pos[0][k])
         count += 1
-    print "".join([str(j) for j in outword])
+    theword = "".join([str(j) for j in outword])
+    word_md5 = hashlib.md5(theword).hexdigest()
+    word_sha256 = hashlib.sha256(theword).hexdigest()
+    print theword, word_md5, word_sha256
 
 def iterator():
     global counter
@@ -34,10 +37,14 @@ def iterator():
 def build_word():
     global max_values
     for i in range(length):
-        char = characters[i]
+        char = word[i]
         subs = getattr(chars, char)
         max_values[i] = len(subs)
         word_dict[i].append(subs)
     iterator()
 
-build_word()
+try:
+    build_word()
+except KeyboardInterrupt:
+    print "\nUser inerrupted operation.  Exiting\n"
+
