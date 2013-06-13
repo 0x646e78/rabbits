@@ -26,7 +26,7 @@ word                    A string to convert
 TODO
 ------
 
-uppercase, digits supported in input
+uppercase and digits supported in input
 mongodb
 ntlm and sha1 hashes
 etc
