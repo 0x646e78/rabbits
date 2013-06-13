@@ -1,2 +1,5 @@
 *.py[cod] 
 *.swp
+
+infile
+outfile

@@ -6,9 +6,10 @@ from os import sys
 from collections import defaultdict
 import chars
 
-# Get options
 # TODO:
-# --hash <sha1, ntlm> --infile --mongo --random
+# --hash ntlm --mongo --random
+
+# Get options
 parser = argparse.ArgumentParser(
                                 description='Rabbits is a word permuter. Go forward and multiply',
                                 epilog='''
@@ -23,13 +24,6 @@ parser.add_argument('-V', '--verboseplus', action='store_true', help='More verbo
 parser.add_argument('word', nargs='?', help="The input string to convert")
 args = parser.parse_args()
 
-# Set up initial state
-word = args.word
-length = len(word)
-word_dict = defaultdict(list)
-max_values = [0 for i in range(length)]
-counter = [0 for i in range(length)]
-
 # print messages if verbosity set
 def verbose(message):
     if args.verbose or args.verboseplus:
@@ -41,11 +35,8 @@ def file_op(action):
         global infile
         try:
             if action == 'open':
-                infile = open(args.infile, 'r')
-                verbose("%s opened as input file" % args.infile)
-            if infile and action == 'close':
-                infile.close()
-                verbose("Closing file %s" % args.infile)
+                infile = open(args.infile).read().splitlines()
+                verbose("%s read as input file" % args.infile)
         except (IOError, NameError):
             sys.exit("Could not open input file.  Exiting")
     if args.outfile:
@@ -88,7 +79,7 @@ def make_permute():
     output(outword)
 
 # Iterate through each positional count
-def iterator():
+def iterator(word):
     global counter
     while True:
         make_permute()
@@ -102,9 +93,17 @@ def iterator():
     verbose("Finished permutation output of '%s'" % word)
 
 # Get our possible letter substitutions, build a dictionary
-def build_word():
+def build_word(word):
+    verbose("Building permutations of '%s'" % word)
     global max_values
+    global length
+    global counter
+    global word_dict
     count = 1
+    word_dict = defaultdict(list)
+    length = len(word)
+    max_values = [0 for i in range(length)]
+    counter = [0 for i in range(length)]
     for i in range(length):
         char = word[i]
         subs = getattr(chars, char)
@@ -112,17 +111,20 @@ def build_word():
         word_dict[i].append(subs)
         count = max_values[i] * count
     verbose("%s possible permutations calculated" % count)
-    iterator()
+    iterator(word)
 
 # Start
 try:
     file_op('open')
-#    for line in infile:
-#        print line
-    verbose("Building permutations of '%s'" % word)
-    build_word()
+    if args.infile:
+        for line in infile:
+            build_word(line)
+            print
+    elif args.word:
+        build_word(args.word)
+    else:
+        print "You must chose either an input file or state a word to process."
 except KeyboardInterrupt:
     print "\nUser inerrupted operation.  Exiting\n"
 finally:
     file_op('close')
-
