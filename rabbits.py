@@ -110,7 +110,7 @@ def build_word(word):
         max_values[i] = len(subs)
         word_dict[i].append(subs)
         count = max_values[i] * count
-    verbose("%s possible permutations calculated" % count)
+    verbose("%d possible permutations calculated" % count)
     iterator(word)
 
 # Start
